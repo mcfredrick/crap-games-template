@@ -1,0 +1,83 @@
+# copier.yml
+_questions:
+  game_name:
+    type: str
+    help: "Display name of the game"
+    validator: ^[a-zA-Z0-9 _-]+$
+    message: "Please enter a valid game name (letters, numbers, spaces, hyphens, and underscores only)"
+
+  subdomain:
+    type: str
+    help: "Subdomain for the game (e.g., 'mygame' for mygame.crap.games)"
+    validator: ^[a-z0-9-]+$
+    message: "Please use only lowercase letters, numbers, and hyphens"
+
+  description:
+    type: str
+    help: "Short description of the game"
+    default: "A Godot web game"
+
+  category:
+    type: str
+    help: "Game category (e.g., simulation, action, puzzle)"
+    default: "game"
+    choices:
+      - action
+      - adventure
+      - puzzle
+      - simulation
+      - strategy
+      - other
+
+  tags:
+    type: str
+    help: "Comma-separated list of tags (e.g., 'strategy, resource-management')"
+    default: "godot"
+
+  author:
+    type: str
+    help: "Your GitHub username"
+    default: "{{ '{{' }} git_user_name | default('yourusername') }}"
+
+  repo_url:
+    type: str
+    help: "GitHub repository URL (e.g., https://github.com/username/repo)"
+    default: "https://github.com/{{ '{{' }} author | default('yourusername') }}/{{ '{{' }} subdomain | default('mygame') }}"
+
+  version:
+    type: str
+    help: "Initial version number"
+    default: "0.1.0"
+
+  godot_version:
+    type: str
+    help: "Godot version to use"
+    default: "4.5.1"
+
+# Files and directories to include in the template
+_templates_sources:
+  - .github/
+  - export_web.sh
+  - install_godot_export_templates.sh
+  - .gitignore
+  - README.md.template
+
+# Files to exclude from the template
+_exclude:
+  - "**/.DS_Store"
+  - "**/__pycache__"
+  - "**/*.import"
+  - "**/.import"
+  - "**/.godot"
+  - "**/build"
+
+# Post-copy script to make scripts executable
+_post_copy:
+  - chmod +x "{{ _copier_conf.dst_path }}/export_web.sh"
+  - chmod +x "{{ _copier_conf.dst_path }}/install_godot_export_templates.sh"
+
+# Template version
+_copier_version: "6.0.0"
+
+# Template description
+description: "Template for Godot web games on Crap.Games"

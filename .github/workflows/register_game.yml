@@ -1,0 +1,24 @@
+name: Update Game Registry
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  update-registry:
+    uses: mcfredrick/crap_games/.github/workflows/update-registry.yml@main
+    with:
+      game-name: "{{ game_name }}"
+      subdomain: "{{ subdomain }}"
+      description: "{{ description }}"
+      category: "{{ category }}"
+      tags: "{{ tags }}"
+      thumbnail-url: "https://{{ subdomain }}.crap.games/assets/icon.png"
+      author: "{{ author }}"
+      repo-url: "{{ repo_url }}"
+      version: "{{ version }}"
+    secrets: inherit
