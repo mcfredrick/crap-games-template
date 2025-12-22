@@ -40,3 +40,8 @@ Thumbs.db
 # Project specific
 /export.log
 /export_verbose.log
+
+# Template specific
+.template/
+.copier-answers.yml
+.template-*

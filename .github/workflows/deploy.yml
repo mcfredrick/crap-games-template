@@ -12,10 +12,37 @@ permissions:
   id-token: write
 
 jobs:
-  deploy-godot:
-    uses: mcfredrick/crap_games/.github/workflows/deploy_godot_web.yml@main
-    with:
-      project_dir: "godot_web_game"
-      export_preset: "Web"
-      godot_version: "{{ godot_version }}"
-      build_dir: "godot_web_game/build/web"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Set up build directory
+        run: mkdir -p godot_web_game/build/web
+          
+      - name: Set up Godot
+        uses: aBARICHELLO/godot-ci@v1.0.0
+        with:
+          godot_version: '4.5.1'
+          preset: 'web'
+          export_debug: 'true'
+          export_pack: 'false'
+          project_path: 'godot_web_game/'
+          export_path: 'build/{{ github.sha }}.zip'
+          export_name: 'web'
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,4 +1,11 @@
 # copier.yml
+# Skip if answers file exists (update mode)
+_skip_if:
+  - _copier_conf.answers_file != ""
+
+# Handle .jinja files specially
+_templates_suffix: .jinja
+
 _questions:
   game_name:
     type: str
@@ -37,12 +44,12 @@ _questions:
   author:
     type: str
     help: "Your GitHub username"
-    default: "{{ '{{' }} git_user_name | default('yourusername') }}"
+    default: "{{ git_user_name | default('yourusername') }}"
 
   repo_url:
     type: str
     help: "GitHub repository URL (e.g., https://github.com/username/repo)"
-    default: "https://github.com/{{ '{{' }} author | default('yourusername') }}/{{ '{{' }} subdomain | default('mygame') }}"
+    default: "https://github.com/{{ author | default('yourusername') }}/{{ subdomain | default('mygame') }}"
 
   version:
     type: str
@@ -61,20 +68,84 @@ _templates_sources:
   - install_godot_export_templates.sh
   - .gitignore
   - README.md.template
+  - godot_web_game/export_presets.cfg
 
 # Files to exclude from the template
 _exclude:
   - "**/.DS_Store"
   - "**/__pycache__"
   - "**/*.import"
+  - "export_presets.cfg"  # Handle this file specially
   - "**/.import"
   - "**/.godot"
   - "**/build"
+  - ".git"
+  - ".git/**"
 
-# Post-copy script to make scripts executable
+# Post-copy script to initialize new repository and make scripts executable
 _post_copy:
+  # Make scripts executable
   - chmod +x "{{ _copier_conf.dst_path }}/export_web.sh"
   - chmod +x "{{ _copier_conf.dst_path }}/install_godot_export_templates.sh"
+
+  # Create export_presets.cfg with correct content
+  - |
+    cat > "{{ _copier_conf.dst_path }}/godot_web_game/export_presets.cfg" << 'EOF'
+    [preset.0]
+    
+    name="Web"
+    platform="Web"
+    runnable=true
+    advanced_options=false
+    dedicated_server=false
+    custom_features=""
+    export_filter="all_resources"
+    include_filter=""
+    exclude_filter=""
+    export_path=""
+    patches=PackedStringArray()
+    encryption_include_filters=""
+    encryption_exclude_filters=""
+    seed=0
+    encrypt_pck=false
+    encrypt_directory=false
+    script_export_mode=2
+    
+    [preset.0.options]
+    
+    custom_template/debug=""
+    custom_template/release=""
+    variant/extensions_support=false
+    variant/thread_support=true
+    vram_texture_compression/for_desktop=true
+    vram_texture_compression/for_mobile=false
+    html/export_icon=true
+    html/custom_html_shell=""
+    html/head_include='<link rel="manifest" href="manifest.json">'
+    html/canvas_resize_policy=2
+    html/focus_canvas_on_start=true
+    html/experimental_virtual_keyboard=false
+    progressive_web_app/enabled=true
+    progressive_web_app/ensure_cross_origin_isolation_headers=true
+    progressive_web_app/offline_page=""
+    progressive_web_app/display=1
+    progressive_web_app/orientation=0
+    progressive_web_app/icon_144x144="res://icon.png"
+    progressive_web_app/icon_192x192="res://icon.png"
+    progressive_web_app/icon_512x512="res://icon.png"
+    progressive_web_app/background_color=Color(0, 0, 0, 1)
+    threads/emscripten_pool_size=8
+    threads/godot_pool_size=4
+    
+    [preset.0.files]
+    
+    {"path":"res://.godot/export/presets/Web-{{ godot_version }}.stable.official.export_web.cfg","enabled":true}
+    {"path":"res://scenes/Main.tscn","enabled":true}
+    {"path":"res://icon.svg","enabled":true}
+    EOF
+
+  # Initialize git repository and make initial commit
+  - cd "{{ _copier_conf.dst_path }}" && rm -rf .git && git init && git add . && git commit -m "Initial commit"
 
 # Template version
 _copier_version: "6.0.0"
