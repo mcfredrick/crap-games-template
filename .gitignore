@@ -1,7 +1,6 @@
 # Godot-specific ignores
 .godot/
 .import/
-*.import
 
 # Build output
 **/build/
@@ -42,5 +41,4 @@ Thumbs.db
 
 # Template specific
 .template/
-.copier-answers.yml
 .template-*

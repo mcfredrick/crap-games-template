@@ -3,9 +3,9 @@ name: Update Game Registry
 permissions:
   contents: write
 
+# Manual so a game can deploy to its github.io URL during development and join
+# all.crap.games only once its subdomain is live.
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       description: "{{ description }}"
       category: "{{ category }}"
       tags: "{{ tags }}"
-      thumbnail-url: "https://{{ subdomain }}.crap.games/assets/icon.png"
+      thumbnail-url: "https://{{ subdomain }}.crap.games/index.icon.png"
       author: "{{ author }}"
       repo-url: "{{ repo_url }}"
       version: "{{ version }}"

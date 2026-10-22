@@ -17,13 +17,15 @@ description:
 category:
   type: str
   help: "Game category (e.g., simulation, action, puzzle)"
-  default: "game"
+  default: "other"
   choices:
-    - action
-    - adventure
     - puzzle
-    - simulation
+    - action
     - strategy
+    - simulation
+    - arcade
+    - casual
+    - educational
     - other
 
 tags:
@@ -33,13 +35,13 @@ tags:
 
 author:
   type: str
-  help: "Your GitHub username"
-  default: "{{ git_user_name | default('yourusername') }}"
+  help: "Author name shown on all.crap.games"
+  default: "ttam"
 
 repo_url:
   type: str
   help: "GitHub repository URL (e.g., https://github.com/username/repo)"
-  default: "https://github.com/{{ author | default('yourusername') }}/{{ subdomain | default('mygame') }}"
+  default: "https://github.com/mcfredrick/{{ subdomain }}"
 
 version:
   type: str
